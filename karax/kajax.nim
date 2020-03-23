@@ -22,6 +22,7 @@ type
 
   XMLHttpRequestUpload* {.importc.} = JsObject
 
+
 proc newFormData*(): FormData {.importcpp: "new FormData()".}
 proc append*(f: FormData, key: cstring, value: Blob) {.importcpp:"#.append(@)".}
 proc append*(f: FormData, key: cstring, value: cstring) {.importcpp:"#.append(@)".}
@@ -49,12 +50,11 @@ proc uploadFile*(url: cstring, file: Blob, onprogress :proc(data: ProgressEvent)
   proc contWrapper(httpStatus: int; response: cstring) =
     cont(httpStatus, response)
 
-  proc upload(r: HttpRequest):XMLHttpRequestUpload {.importcpp: "#.upload".}
+  proc upload(r: HttpRequest): XMLHttpRequestUpload {.importjs: "#.upload".}
   var this {.importc: "this".}: ThisObj
 
   var formData = newFormData()
-  formData.append("upload_file",file)
-  formData.append("filename", DomFile(file).name)
+  formData.append("file", DomFile(file))
   let ajax = newRequest()
   ajax.open("POST", url, true)
   for a, b in items(headers):
