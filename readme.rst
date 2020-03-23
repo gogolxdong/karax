@@ -310,7 +310,7 @@ Karax也可用于在服务器上渲染HTML。只有其中的几个模块可以�
   const places = @["boston", "cleveland", "los angeles", "new orleans"]
 
   proc render*(): string =
-    let node = buildHtml(tdiv(class = "mt-3")):
+    let vnode = buildHtml(tdiv(class = "mt-3")):
       h1: text "My Web Page"
       p: text "Hello world"
       ul:
@@ -323,3 +323,5 @@ Karax也可用于在服务器上渲染HTML。只有其中的几个模块可以�
         dt: text "Can I use Karax for server side HTML rendering?"
         dd: text "Yes"
     result = $vnode
+
+  echo render()

@@ -19,6 +19,7 @@ const
 <!DOCTYPE html>
 <html>
 <head>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
   <title>$1</title>
   $2
 </head>
@@ -35,9 +36,8 @@ proc exec(cmd: string) =
 
 proc build(name: string, rest: string, selectedCss: string, run: bool) =
   echo("Building...")
-  createDir("nimcache")
-  exec("nim js --out:nimcache/" & name & ".js " & rest)
-  let dest = "nimcache" / name & ".html"
+  exec("nim js --out:" & name & ".js " & rest)
+  let dest = name & ".html"
   writeFile(dest, html % [name, selectedCss])
   if run: openDefaultBrowser(dest)
 
@@ -75,7 +75,6 @@ proc main =
   if file.len == 0: quit "filename expected"
   let name = file.splitFile.name
   build(name, rest, selectedCss, run)
-  echo("after build")
   if watch:
     # TODO: launch http server
     while true:

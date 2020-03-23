@@ -254,7 +254,10 @@ proc eq(a, b: VNode; recursive: bool): EqResult =
     for i in 0..<a.len:
       if eq(a[i], b[i], recursive) == different: return different
   elif a.kind == VNodeKind.dthunk:
-    return identical
+    if a.dom == b.dom:
+      return identical
+    else: # fix #119
+      return different
   elif a.kind == VNodeKind.verbatim:
     if a.text != b.text:
       return different
@@ -373,7 +376,10 @@ proc applyPatch(kxi: KaraxInstance) =
       if p.parent == nil:
         replaceById(kxi.rootId, nn)
       else:
-        p.parent.replaceChild(nn, p.current)
+        if p.current.parentNode == p.parent:
+          p.parent.replaceChild(nn, p.current)
+        else: # fix #121
+          p.parent.appendChild(nn)
     of pkSame:
       moveDom(p.newNode, p.oldNode)
     of pkRemove:
@@ -591,6 +597,14 @@ proc runDiff*(kxi: KaraxInstance; oldNode, newNode: VNode) =
 
 var onhashChange {.importc: "window.onhashchange".}: proc()
 var hashPart {.importc: "window.location.hash".}: cstring
+
+proc avoidDomDiffing*(kxi: KaraxInstance = kxi) =
+  ## enforce a full redraw for the next redraw operation.
+  ## This can be used as a temporary way to workaround DOM diffing
+  ## problems or to avoid the DOM diffing when you already know
+  ## it should use a completely new DOM.
+  ## This is an experimental API.
+  kxi.currentTree = nil
 
 proc dodraw(kxi: KaraxInstance) =
   if kxi.renderer.isNil: return

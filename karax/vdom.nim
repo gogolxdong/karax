@@ -45,6 +45,10 @@ type
     keygen, output, progress, meter,
     details, summary, command, menu
 
+const selfClosing = {area, base, br, col, embed, hr, img, input,
+  link, meta, param, source, track, wbr}
+
+
 type
   EventKind* {.pure.} = enum ## The events supported by the virtual DOM.
     onclick, ## An element is clicked.
@@ -91,8 +95,7 @@ type
     onkeyupenter, ## vdom extension: an input field received the ENTER key press
     onkeyuplater,  ## vdom extension: a key was pressed and some time
                   ## passed (useful for on-the-fly text completions)
-    onmousewheel 
-
+    onload, # img
 
 macro buildLookupTables(): untyped =
   var a = newTree(nnkBracket)
@@ -435,6 +438,8 @@ proc add*(result: var string, n: VNode, indent = 0, indWidth = 2) =
       result.add("</")
       result.add(kind)
       result.add(">")
+    elif n.kind in selfClosing:
+      result.add(" />")
     else:
       result.add(">")
       result.add("</")
