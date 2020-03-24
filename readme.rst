@@ -281,7 +281,7 @@ errors模块也提供一个方便的 ``disableOnError`` 过程。如果有错误
 =======
 
 对于路由 ``setRenderer`` ，可以使用带有参数 ``RouterData`` 的回调来调用。
-以下是有名的“Todo App”示例的相关代码：
+以下是无人不知的“Todo App”示例的相关代码：
 
 .. code-block:: nim
 
